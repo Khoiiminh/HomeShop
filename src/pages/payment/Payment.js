@@ -37,20 +37,18 @@ import {
 } from '../../components/ui/ui-components';
 import { CreditCard, ArrowLeftCircle, RefreshCw } from 'lucide-react';
 import { useSelector } from 'react-redux';
+import { selectCartTotals } from '../../redux/orebiSlice';
 
-const Payment = ({ 
-  products = [], 
+const Payment = ({   
   onBack = () => {}, 
   onPaymentComplete = () => {} 
 }) => {
   const [paymentStatus, setPaymentStatus] = useState('');
   const [refundStatus, setRefundStatus] = useState('');
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('card');
+  const [ setSelectedPaymentMethod] = useState('card');
   
-  // Calculate totals from products prop
-  const subtotal = useSelector((state) => state.orebiReducer.totalAmt);
-  const shippingCharge = useSelector((state) => state.orebiReducer.shippingCharge);
-  const total = subtotal + shippingCharge;
+  const products = useSelector((state) => state.orebiReducer.products);
+  const { subtotal, shippingCharge, total } = useSelector(selectCartTotals);
 
   const handlePayment = () => {
     // Simulate payment processing
