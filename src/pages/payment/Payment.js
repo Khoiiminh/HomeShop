@@ -14,14 +14,15 @@ import {
   AlertTitle,
 } from '../../components/ui/ui-components';
 import { CreditCard, ArrowLeftCircle, RefreshCw } from 'lucide-react';
-import { useSelector } from 'react-redux';
-import { selectCartTotals } from '../../redux/orebiSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectCartTotals, resetCart} from '../../redux/orebiSlice';
 
 const Payment = ({ onBack = () => {}, onPaymentComplete = () => {} }) => {
   const [paymentStatus, setPaymentStatus] = useState('');
   const [refundStatus, setRefundStatus] = useState('');
   const [paymentAmount, setPaymentAmount] = useState(0); // Track payment amount
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('card');
+  const dispatch = useDispatch();
 
   const products = useSelector((state) => state.orebiReducer.products);
   const { subtotal, shippingCharge, total } = useSelector(selectCartTotals);
@@ -49,7 +50,9 @@ const Payment = ({ onBack = () => {}, onPaymentComplete = () => {} }) => {
     setTimeout(() => {
       setRefundStatus('success');
       alert(`A refund of $${paymentAmount} has been processed.`);
-      return paymentAmount; // Return the payment amount
+      dispatch(resetCart());
+      setPaymentAmount(0);
+      setPaymentStatus('');
     }, 2000);
   };
 
