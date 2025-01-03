@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { FaFacebook, FaYoutube, FaLinkedin, FaGithub } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 import FooterListTitle from "./FooterListTitle";
 import { paymentCard } from "../../../assets/images";
 import Image from "../../designLayouts/Image";
@@ -37,17 +37,9 @@ const Footer = () => {
             Thank you for visiting HomeShop! We are committed to providing you with the best shopping experience. Stay tuned for new arrivals and exclusive offers!
             </p>
             <ul className="flex items-center gap-2">
+              
               <a
-                href="https://www.youtube.com/@reactjsBD"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <li className="w-7 h-7 bg-primeColor text-gray-100 hover:text-white cursor-pointer text-lg rounded-full flex justify-center items-center hover:bg-black duration-300">
-                  <FaYoutube />
-                </li>
-              </a>
-              <a
-                href="https://github.com/noorjsdivs"
+                href="https://github.com/Khoiiminh/HomeShop"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -55,24 +47,7 @@ const Footer = () => {
                   <FaGithub />
                 </li>
               </a>
-              <a
-                href="https://www.facebook.com/Noorlalu143/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <li className="w-7 h-7 bg-primeColor text-gray-100 hover:text-white cursor-pointer text-lg rounded-full flex justify-center items-center hover:bg-black duration-300">
-                  <FaFacebook />
-                </li>
-              </a>
-              <a
-                href="https://www.linkedin.com/in/noor-mohammad-ab2245193/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <li className="w-7 h-7 bg-primeColor text-gray-100 hover:text-white cursor-pointer text-lg rounded-full flex justify-center items-center hover:bg-black duration-300">
-                  <FaLinkedin />
-                </li>
-              </a>
+              
             </ul>
           </div>
         </div>
