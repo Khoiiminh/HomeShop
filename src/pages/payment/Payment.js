@@ -1,25 +1,3 @@
-// import React from "react";
-// import { Link } from "react-router-dom";
-// import Breadcrumbs from "../../components/pageProps/Breadcrumbs";
-
-// const Payment = () => {
-//   return (
-//     <div className="max-w-container mx-auto px-4">
-//       <Breadcrumbs title="Payment gateway" />
-//       <div className="pb-10">
-//         <p>Payment gateway only applicable for Production build.</p>
-//         <Link to="/">
-//           <button className="w-52 h-10 bg-primeColor text-white text-lg mt-4 hover:bg-black duration-300">
-//             Explore More
-//           </button>
-//         </Link>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Payment;
-
 import React, { useState } from 'react';
 import {
   Card,
@@ -39,31 +17,39 @@ import { CreditCard, ArrowLeftCircle, RefreshCw } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { selectCartTotals } from '../../redux/orebiSlice';
 
-const Payment = ({   
-  onBack = () => {}, 
-  onPaymentComplete = () => {} 
-}) => {
+const Payment = ({ onBack = () => {}, onPaymentComplete = () => {} }) => {
   const [paymentStatus, setPaymentStatus] = useState('');
   const [refundStatus, setRefundStatus] = useState('');
-  const [ setSelectedPaymentMethod] = useState('card');
-  
+  const [paymentAmount, setPaymentAmount] = useState(0); // Track payment amount
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('card');
+
   const products = useSelector((state) => state.orebiReducer.products);
   const { subtotal, shippingCharge, total } = useSelector(selectCartTotals);
 
   const handlePayment = () => {
+    if (paymentStatus === 'success') return; // Prevent duplicate payments
+
     // Simulate payment processing
     setPaymentStatus('processing');
     setTimeout(() => {
       setPaymentStatus('success');
+      setPaymentAmount(total); // Set the payment amount
       onPaymentComplete();
     }, 2000);
   };
 
   const handleRefund = () => {
+    if (paymentStatus !== 'success') {
+      setRefundStatus('error');
+      return 0; // Return 0 if no payment was made
+    }
+
     // Simulate refund processing
     setRefundStatus('processing');
     setTimeout(() => {
       setRefundStatus('success');
+      alert(`A refund of $${paymentAmount} has been processed.`);
+      return paymentAmount; // Return the payment amount
     }, 2000);
   };
 
@@ -90,7 +76,7 @@ const Payment = ({
                     <p className="font-medium">{item.title}</p>
                     <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
                   </div>
-                  <p className="font-medium">${(item.price * item.quantity)}</p>
+                  <p className="font-medium">${item.price * item.quantity}</p>
                 </div>
               ))}
               <div className="border-t pt-4">
@@ -122,7 +108,7 @@ const Payment = ({
                 <TabsTrigger value="card">Credit Card</TabsTrigger>
                 <TabsTrigger value="bank">Bank Transfer</TabsTrigger>
               </TabsList>
-              
+
               <TabsContent value="card" className="space-y-4">
                 <input
                   type="text"
@@ -142,7 +128,7 @@ const Payment = ({
                   />
                 </div>
               </TabsContent>
-              
+
               <TabsContent value="bank">
                 <div className="space-y-4">
                   <p className="text-sm">Bank: Example Bank</p>
@@ -150,34 +136,34 @@ const Payment = ({
                   <p className="text-sm">Reference: ORD-{Date.now()}</p>
                 </div>
               </TabsContent>
-
-              <div className="mt-6 space-y-4">
-                <button
-                  onClick={handlePayment}
-                  disabled={paymentStatus === 'processing'}
-                  className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-2 rounded hover:bg-green-700 disabled:bg-gray-400"
-                >
-                  {paymentStatus === 'processing' ? (
-                    <RefreshCw className="h-5 w-5 animate-spin" />
-                  ) : (
-                    <CreditCard className="h-5 w-5" />
-                  )}
-                  {paymentStatus === 'processing' ? 'Processing...' : 'Pay Now'}
-                </button>
-
-                <button
-                  onClick={handleRefund}
-                  disabled={refundStatus === 'processing'}
-                  className="w-full flex items-center justify-center gap-2 bg-gray-200 text-gray-800 py-2 rounded hover:bg-gray-300 disabled:bg-gray-100"
-                >
-                  {refundStatus === 'processing' ? (
-                    <RefreshCw className="h-5 w-5 animate-spin" />
-                  ) : (
-                    'Request Refund'
-                  )}
-                </button>
-              </div>
             </Tabs>
+
+            <div className="mt-6 space-y-4">
+              <button
+                onClick={handlePayment}
+                disabled={paymentStatus === 'processing'}
+                className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-2 rounded hover:bg-green-700 disabled:bg-gray-400"
+              >
+                {paymentStatus === 'processing' ? (
+                  <RefreshCw className="h-5 w-5 animate-spin" />
+                ) : (
+                  <CreditCard className="h-5 w-5" />
+                )}
+                {paymentStatus === 'processing' ? 'Processing...' : 'Pay Now'}
+              </button>
+
+              <button
+                onClick={handleRefund}
+                disabled={refundStatus === 'processing'}
+                className="w-full flex items-center justify-center gap-2 bg-gray-200 text-gray-800 py-2 rounded hover:bg-gray-300 disabled:bg-gray-100"
+              >
+                {refundStatus === 'processing' ? (
+                  <RefreshCw className="h-5 w-5 animate-spin" />
+                ) : (
+                  'Request Refund'
+                )}
+              </button>
+            </div>
 
             {paymentStatus === 'success' && (
               <Alert className="mt-4 bg-green-50 border-green-200">
@@ -192,7 +178,16 @@ const Payment = ({
               <Alert className="mt-4 bg-blue-50 border-blue-200">
                 <AlertTitle>Refund Requested</AlertTitle>
                 <AlertDescription>
-                  Your refund request has been submitted and will be processed within 3-5 business days.
+                  A total payment of ${paymentAmount} has been refunded and will be processed within 3-5 business days.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {refundStatus === 'error' && (
+              <Alert className="mt-4 bg-red-50 border-red-200">
+                <AlertTitle>Refund Failed</AlertTitle>
+                <AlertDescription>
+                  You have not completed a payment. Refund is not possible.
                 </AlertDescription>
               </Alert>
             )}
